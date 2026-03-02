@@ -1,0 +1,54 @@
+import {
+  reactExtension,
+  useBuyerJourneyIntercept,
+  useExtensionCapability,
+  useTotalAmount,
+  TextBlock,
+  Banner,
+} from "@shopify/ui-extensions-react/checkout";
+import React, { useState } from "react";
+
+export default reactExtension("purchase.checkout.block.render", () => <App />);
+
+function App() {
+  const [showError, setShowError] = useState(false);
+  const OrderCosts = useTotalAmount();
+  const orderTotal = OrderCosts.amount;
+  const canBlockProgress = useExtensionCapability("block_progress");
+  // Use the `buyerJourney` intercept to conditionally block checkout progress
+  useBuyerJourneyIntercept(() => {
+    // Validate that the order cost is at least $30
+    if (orderTotal < 30) {
+      return {
+        behavior: "block",
+        reason: "Order cost is less than $30",
+        perform: (result) => {
+          // If progress can be blocked, then show an error message
+          if (result.behavior === "block") {
+            setShowError(true);
+          }
+        },
+      };
+    }
+
+    return {
+      behavior: "allow",
+      perform: () => {
+        // Ensure any errors are hidden
+        setShowError(false);
+      },
+    };
+  });
+
+  return (
+    <>
+      {showError && (
+			<Banner
+      status="critical"
+      title=" Order cost must be at least $30"
+    />
+      )}
+      {/* Render other components of your extension */}
+    </>
+  );
+}

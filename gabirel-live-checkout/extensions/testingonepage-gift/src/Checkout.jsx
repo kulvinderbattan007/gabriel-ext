@@ -1,0 +1,183 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Banner,
+  useApi,
+  useExtensionApi,
+  useTranslate,
+  reactExtension,
+   useAttributes,
+  useApplyAttributeChange,
+  useShippingAddress,
+  useApplyShippingAddressChange,
+  Image,
+  Text,
+  Link,
+  TextBlock,
+  BlockStack,
+  Pressable,
+  InlineLayout,
+  Icon,
+  ChoiceList,
+  Choice,
+  InlineStack,
+  useDeliveryGroups,
+  useDeliveryGroup,
+  DatePicker,
+  DateField,
+  Button,
+  Grid,
+  GridItem,
+  BlockLayout,
+  View,
+  Heading,
+  useTotalAmount,
+   Style,
+   TextField,
+   Form,
+   Checkbox,
+   BlockSpacer,
+   useApplyNoteChange,
+} from '@shopify/ui-extensions-react/checkout';
+ 
+export default reactExtension(
+  'purchase.checkout.shipping-option-list.render-after',
+  () => <Extension />,
+);
+
+ 
+
+
+function Extension() {
+  const translate = useTranslate();
+  const { extension } = useApi();
+  const [showForm, setShowForm] = useState(false);
+  const [showMsg, setShowMsg] = useState(false);
+  const [showErr, setShowErr] = useState(false);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [message, setMessage] = useState('');
+  const [disablebtn, setDisablebtn] = useState(true);
+  
+
+  const applyNoteChange = useApplyNoteChange();
+
+const handleSubmit = async () => {
+  try {
+    if (!from || !to || !message) {
+      setShowErr(true);
+      setShowMsg(false); // Reset showMsg in case it was previously set
+      return;
+    }
+    
+    // Concatenate form data into a single string
+    const note = `From=${from}/To=${to}/Message=${message}`;
+    
+    // Apply the note change to the checkout
+    await applyNoteChange({
+      type: 'updateNote',
+      note
+    });
+	  
+    setShowErr(false); // Reset showErr in case it was previously set
+    setShowMsg(true);
+	setDisablebtn(false);
+
+    // Log success message or perform any additional actions
+    console.log('Note saved successfully:', note);
+  } catch (error) {
+    setShowErr(true);
+    setShowMsg(false); // Reset showMsg in case it was previously set
+    console.error('Error saving note:', error);
+  }
+};
+
+const removeNote = async () => {
+    const note = ``;
+    setFrom('');
+	setMessage('');
+	setTo('');
+    // Apply the note change to the checkout
+    await applyNoteChange({
+      type: 'updateNote',
+      note
+    });
+	  
+    setShowMsg(false); 
+  
+};
+
+
+ 
+ const handleCheckboxChange = (value) => {
+    setShowForm(value);
+  };
+
+
+
+    console.log('Test Gift');
+    return (
+      <>
+	   <View border="none" padding="base">
+       <Checkbox id="checkbox" name="checkbox" checked={showForm} onChange={handleCheckboxChange}>
+        Add a 🎁 Gift Note
+       </Checkbox>
+	    {showForm && (
+		 <View border="none" padding="base">
+         <Form onSubmit={handleSubmit}>
+      <Grid columns={['50%', '50%']} spacing="base">
+        <View>
+          <TextField
+            label="From"
+            id="fromgiftnote"
+            type="email"
+            value={from}
+            onChange={setFrom}
+			required={true}
+			error={showErr}
+          />
+        </View>
+        <View>
+          <TextField
+            label="To"
+            id="togiftnote"
+            type="email"
+            value={to}
+            onChange={setTo}
+			required={true}
+			error={showErr}
+          />
+        </View>
+        <GridItem columnSpan={2}>
+          <TextField
+            label="Message"
+            value={message}
+            onChange={setMessage}
+			required={true}
+			error={showErr}
+          />
+        </GridItem>
+      </Grid>
+      <BlockSpacer spacing="base" />
+      <Button accessibilityRole="submit">Save</Button>
+    </Form>
+	 { showMsg && (
+	   <View border="none" padding="base">
+	  <Text size="Small">Saved Successfully! </Text>
+	  <Link
+id="clear_note_btn"
+onPress={() => {
+removeNote();
+}}
+>
+Delete Note
+</Link>
+	  </View>
+	   )}
+		</View>
+      )}
+		</View>
+      </>
+    );
+  
+ 
+}

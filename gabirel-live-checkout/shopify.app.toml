@@ -1,0 +1,19 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "One Page Checkout Custom"
+client_id = "14bfb6f31aa9820f6585b47bf2be9762"
+application_url = "https://onepagecheckout.gabriel-llaurado.com"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://onepagecheckout.gabriel-llaurado.com/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false

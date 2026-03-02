@@ -1,0 +1,168 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Banner,
+  useApi,
+  useExtensionApi,
+  useTranslate,
+  reactExtension,
+   useAttributes,
+  useApplyAttributeChange,
+  useShippingAddress,
+  useApplyShippingAddressChange,
+  Image,
+  Text,
+  Link,
+  TextBlock,
+  BlockStack,
+  Pressable,
+  InlineLayout,
+  Icon,
+  ChoiceList,
+  Choice,
+  InlineStack,
+  useDeliveryGroups,
+  useDeliveryGroup,
+  DatePicker,
+  DateField,
+  Button,
+  Grid,
+  GridItem,
+  BlockLayout,
+  View,
+  Heading,
+  useTotalAmount,
+   Style,
+   TextField,
+   Form,
+   Checkbox,
+   BlockSpacer,
+   useApplyNoteChange,
+   useApplyCartLinesChange,
+   useCartLineTarget,
+   useCartLines,
+} from '@shopify/ui-extensions-react/checkout';
+ 
+export default reactExtension(
+  'purchase.checkout.shipping-option-list.render-after',
+  () => <Extension />,
+);
+  
+ 
+
+
+function Extension() {
+  const localzipcodes = [33436,33426,33431,33433,33434,33435];
+  const [AddProtection, setAddProtection] = useState(false);
+  const [isMounted, setIsMounted] = useState(true); 
+  const applyCartLinesChange = useApplyCartLinesChange();
+  const translate = useTranslate();
+  const useraddress_val = useShippingAddress();
+  const userzip_val = useraddress_val.zip;
+  const { extension } = useApi();
+  const applyNoteChange = useApplyNoteChange();
+  const cartitemss = useCartLines();
+  //console.log(cartitemss);
+   let protectionPlanItemId = null;
+   useEffect(() => {
+    return () => {
+      setIsMounted(false); // Set mount status to false when unmounting
+    };
+  }, []);
+  
+ useEffect(() => {
+    if (!isMounted) return; // Check if component is mounted before setting state
+    // Your logic to set state here...
+   
+    for (const item of cartitemss) {
+      if (item.merchandise.title === 'PROTECTION PLAN') {
+        protectionPlanItemId = item.id;
+        setAddProtection(true);
+        break;
+      }
+    }
+  }, [isMounted, cartitemss]);
+
+console.log(protectionPlanItemId);
+ 
+  const handleAddToCart = async () => {
+    try {
+      // Define the new line item to be added to the cart
+      const lineItemToAdd = {
+        type: 'addCartLine',
+        merchandiseId: 'gid://shopify/ProductVariant/44378200506506',
+        quantity: 1, // Replace with the desired quantity
+        attributes: [], // Optionally, add any attributes associated with the line item
+        // Optionally, you can include sellingPlanId if the merchandise is being purchased with a selling plan
+      };
+
+      // Apply the change to add the line item to the cart
+      const result = await applyCartLinesChange(lineItemToAdd);
+      
+      // Optionally, you can handle success or perform additional actions
+      console.log('Line item added to the cart successfully:', result);
+
+	   setAddProtection(true);
+    } catch (error) {
+      console.error('Error adding line item to the cart:', error);
+    }
+  };
+
+
+const handleRemoveFromCart = async () => {
+  try {
+    // Define the line item to be removed from the cart
+    const lineItemToRemove = {
+      type: 'removeCartLine', // Ensure the correct type for removing line items
+      id: protectionPlanItemId, // Replace 'your_line_item_id_here' with the actual ID of the line item
+      quantity: 1, // Specify the quantity being removed, if necessary
+    };
+
+    // Apply the change to remove the line item from the cart
+    const result = await applyCartLinesChange(lineItemToRemove);
+   console.log('Line item removed from the cart successfully:', result);
+  
+    setAddProtection(false);
+  } catch (error) {
+    console.error('Error removing line item from the cart:', error);
+  }
+};
+  
+  
+
+
+ const handleCheckboxInChange = (value) => {
+      setAddProtection(value);
+    if (value) {
+		handleAddToCart();
+		
+	}else{
+		 handleRemoveFromCart(); 
+		
+	}
+	
+  };
+
+
+  
+  if(userzip_val !== null && userzip_val !== undefined){
+  if (localzipcodes.includes(parseInt(userzip_val, 10))) {
+ 
+     //not national
+    
+  }else{
+ console.log('National');
+    return (
+      <>
+	   <View border="none" padding="base">
+       <Checkbox id="checkboxprotection" name="checkboxprotection" checked={AddProtection} onChange={(newValue) => handleCheckboxInChange(newValue)}>
+        Protection Plan
+       </Checkbox>
+		</View>
+      </>
+    );	
+	  
+  }
+  
+  } 
+ 
+}
