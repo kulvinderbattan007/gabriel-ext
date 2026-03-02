@@ -1,0 +1,120 @@
+Skip to content
+Product
+Solutions
+Open Source
+Pricing
+
+Search or jump to...
+Sign in
+Sign up
+Kyon147
+/
+laravel-shopify
+Public
+Code
+Issues
+10
+Pull requests
+6
+Discussions
+Actions
+Projects
+1
+Wiki
+Security
+Insights
+How to create App Extension
+ 
+Luke Walsh edited this page on Dec 18, 2022 · 1 revision
+ Pages 39
+Welcome to the wiki!
+
+Please see the homepage for a list of relevant pages.
+
+Clone this wiki locally
+https://github.com/Kyon147/laravel-shopify.wiki.git
+Recently I submitted my app but was not approved due to the following reason:
+
+Your app is currently using ScriptTag API. Update your app to theme app extensions to ensure compatibility with Online Store 2.0 themes.
+
+In this package, there is no option to create app extensions for the app but I fix the issue by doing the following steps:
+
+Create a new directory for app extension (It can be within your app directory or outside the app directory).
+
+Add shopify.app.toml file in the newly created directory and add the following in toml file:
+
+NAME = "YOUR APP NAME HERE"
+SCOPES = "YOUR SCOPES HERE"
+SHOPIFY_API_KEY = "YOUR SHOPIFY APP API KEY HERE"
+SHOPIFY_API_SECRET = "YOUR SHOPIFY APP SECRET HERE"
+APP_URL = "YOUR APP URL"
+HOST = "YOUR APP HOST"
+PORT = "YOUR APP URL PORT"
+Create package.json file at the root of the directory with the following:
+{
+  "name": "APP NAME HERE WITHOUT SPACE, REPLACE SPACE WITH hyphen ", // my-app
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "shopify": "shopify",
+    "build": "shopify app build",
+    "dev": "shopify app dev",
+    "info": "shopify app info",
+    "scaffold": "shopify app scaffold",
+    "deploy": "shopify app deploy"
+  },
+  "dependencies": {
+    "@shopify/app": "^3",
+    "@shopify/cli": "^3"
+  }
+}
+Run npm install in the root directory. To check Shopify cli is installed, Run npm run shopify For App info Run npm run info
+
+Create an Extension by running the following:
+
+npm run scaffold extension
+
+Then select extension type and name, which will create an extension directory.
+
+Add blocks etc in extension.
+
+Deploy Extension as Draft by running this command:
+npm run deploy
+
+This command will log in to the Shopify partner dashboard. Note: Ruby and Bundler are required.
+
+Once deployed then enable developer preview on the Shopify partner app extension page.
+
+Install the app on the development store and test extensions.
+
+After testing and you can publish your extension in app extension page.
+
+To Remove ScriptTag API and use only App extension
+
+Remove the Script Tag Job comment or remove scripttags option in config/shopify-app.php file.
+
+Add Your JS file in the block you created in your extension.
+
+Example:
+
+<script src="{{ 'your-script.js' | asset_url }}#shop={{ shop.permanent_domain }}" defer></script>
+{% schema %}
+{
+  "name": "Your Script Name Here",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
+You need to add your-script.js file in assets folder of the extension and it will be loaded using Shopify CDN or you can add a full link of your script for an external source.
+
+road map
+
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact

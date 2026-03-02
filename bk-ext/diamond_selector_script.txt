@@ -1,0 +1,1153 @@
+var domain = "https://jewellerybuyer.uk";
+var mainpath = domain + '/shopify/app/diamond_selector_CTDMS';
+var $var = jQuery.noConflict();
+
+$var('head').append('<link rel="stylesheet" href="' + mainpath + '/assets/css/style.css" type="text/css" />');
+//$var('head').append('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>');
+$var('head').append('<script src="' + mainpath + '/assets/js/bootstrap.min.js"></script>');
+
+function numberWithCommas(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
+
+$var(document).ready(function ($) {
+    var shopurl = Shopify.shop;
+    var current_pagetype = meta.page.pageType;
+    var url = window.location.pathname;
+    var current_page = url.substr(url.lastIndexOf('/') + 1);
+    var location_url = window.location;
+    var url = new URL(location_url);
+    $('.cardfoliyo_addcart').hide();
+    if (url.searchParams.get("diamondid") != '') {
+        var Getdiamondid = url.searchParams.get("diamondid");
+        var Getsearch_type = url.searchParams.get("search_type");
+        var details_price = url.searchParams.get("saleprice");
+        var details_final_price = url.searchParams.get("price");
+        var details_handle = url.searchParams.get("handle");
+    }
+	
+    // Function to show upsell list
+    if (current_pagetype == 'product') {
+        $('#add-to-cart').hide()
+        var product_id = meta.product.id;
+		if ($('#dshape').length >0) {
+			if ($('#product-actions').length >0) {
+				var ratio = $('#product-actions div #product-select-'+product_id+' option:selected').html().split('/');
+			} else if ($('.product-select-'+product_id).length >0) {
+				var ratio = $('.product-select-'+product_id+' option:selected').html().split('/');
+			}else{
+				var ratio = 'Platinum / Lab-Grown Diamond(s) / G Colour VS Clarity'.split('/');
+			}
+			var chk_ratio = '';
+			if(ratio.length == '2'){
+				chk_ratio = '';
+			}else{
+				chk_ratio = ratio[2];
+			}
+			
+		}
+          
+        var thisval = $var(this);
+		if ($('#product-actions').length >0) {
+			var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+		} else {
+			var handle = $var('#product_handle').val();
+		}
+      
+        /*Default price get api*/
+        setTimeout(function () {
+			if ($('#dshape').length >0) {
+				var shap = $('#dshape').val();
+				var post_url = mainpath + '/ShopifyFront/GetPriceDiamond';
+				var product_price = $var('#budget').attr('data-default');
+				var minpricedimond = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+				$.ajax({
+					url: post_url,
+					type: "POST",
+					data: {'shap': shap,'shopurl':shopurl},
+					success: function (response) {
+						var MinimumPrice = numberWithCommas(parseFloat(minpricedimond) + parseFloat(response));
+						if (response == '') {
+							$('.ring_price_add').text(product_price);
+						} else {
+							$('.ring_price_add').text('£' + MinimumPrice);
+						}
+					}
+				});
+			}
+        }, 100);
+
+
+
+        $var("body").on('click', '#Fastcardfoliyo', function () {
+			var shopurl = Shopify.shop;
+            $var('.product-information .custom-hide').hide();
+            var shap = $('#dshape').val();//$('#swatch-option1 div.swatch-selected').attr('orig-value');
+            var stones = $('#stones').val();//$('#swatch-option2 div.swatch-selected').attr('orig-value');
+            var finish = $('#swatch-option3 div.swatch-selected').attr('orig-value');
+            var thisval = $var(this);
+            //var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+			
+			var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+			
+  
+            var check_price = $('.ring_price_add').text();//$('#budget').attr('data-default');
+            var maxprice = check_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+
+            var user_price = $('#budget').val();
+            var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+            var sku = $('.variant-sku').text();
+            var type_choosen = $('.check_type:checked').map(function () {
+                return this.value;
+            }).get();
+            var search_type = 'fast';
+            if (user_price != '') {
+                if (parseFloat(user_price) >= parseFloat(maxprice)) {
+                    $var('#error-diamond').text('');
+                    var post_url = mainpath + '/ShopifyFront/GetFastProductDetails';
+                    $var.ajax({
+                        url: post_url,
+                        type: "POST",
+                        data: {'shap': shap, 'product_id': product_id, 'stones': stones,'ratio':chk_ratio, 'user_price': user_price, 'product_price': product_price, 'type_choosen': type_choosen, 'search_type': search_type,'handle':handle,'shopurl':shopurl},
+                        success: function (response) {
+                            $var('.custom-left-show').show();
+                            $var('.custom-hide').hide();
+                            $var('.custom-right').hide();
+                            $var('.custom-left').hide();
+                            $var('.custom-description').hide();
+                            $var('#show_cardfoliyo_list').html(response);
+                            var checkHeight = function () {
+                                var w = document.body.clientWidth;
+                                if (w < 768) {
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', '0');
+                                } else {
+                                    var divheight = $('.content-overlay').height();
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', divheight);
+                                }
+                                if (w < 768) {
+                                    $var('.custom-left-show').hide();
+                                    $var('.custom-left').show();
+                                } else {
+                                    $var('.custom-left-show').show();
+                                    $var('.custom-left').hide();
+                                }
+                            }
+                            checkHeight();
+                            $var(window).bind('resize orientationchange', checkHeight);
+                        }
+                    });
+                } else {
+                    $var('#error-diamond').text('Minimum budget should be' + check_price);
+                }
+            } else {
+                $var('#error-diamond').text('Please enter you budget and proceed, minimum budget should be ' + check_price);
+            }
+
+        });
+		
+		$var("body").on('click', '#FastDiamondDefault', function () {
+			var shopurl = Shopify.shop;
+            $var('.product-information .custom-hide').hide();
+            var shap = $('#dshape').val();//$('#swatch-option1 div.swatch-selected').attr('orig-value');
+            var stones = $('#stones').val();//$('#swatch-option2 div.swatch-selected').attr('orig-value');
+            var finish = $('#swatch-option3 div.swatch-selected').attr('orig-value');
+            var thisval = $var(this);
+            if ($('#product-actions').length >0) {
+				var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+			} else {
+				var handle = $var('#product_handle').val();
+			}
+  
+            var check_price = $('.ring_price_add').text();//$('#budget').attr('data-default');
+            var maxprice = check_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+
+            var user_price = $('#budget').val();
+            var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+            var sku = $('.variant-sku').text();
+            var type_choosen = $('.check_type:checked').map(function () {
+                return this.value;
+            }).get();
+            var search_type = 'fast';
+            if (user_price != '') {
+                if (parseFloat(user_price) >= parseFloat(maxprice)) {
+                    $var('#error-diamond').text('');
+                    var post_url = mainpath + '/ShopifyFront/GetFastProductDetailsDefaultTheme';
+                    $var.ajax({
+                        url: post_url,
+                        type: "POST",
+                        data: {'shap': shap, 'product_id': product_id, 'stones': stones,'ratio':chk_ratio, 'user_price': user_price, 'product_price': product_price, 'type_choosen': type_choosen, 'search_type': search_type,'handle':handle,'shopurl':shopurl,'theme':'default'},
+                        success: function (response) {
+							$var('.product-single__media-group').hide();
+                            $var('.product-single__title').hide();
+							$var('.product-form').hide();
+							$var('.social-sharing').hide();
+							$var('.product-template__container .product-single .grid__item.medium-up--two-fifths').css('width', '100%');
+                            $var('#show_cardfoliyo_list').html(response);
+                            var checkHeight = function () {
+                                var w = document.body.clientWidth;
+                                if (w < 768) {
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', '0');
+                                } else {
+                                    var divheight = $('.content-overlay').height();
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', divheight);
+                                }
+                                if (w < 768) {
+                                    $var('.custom-left-show').hide();
+                                    $var('.custom-left').show();
+                                } else {
+                                    $var('.custom-left-show').show();
+                                    $var('.custom-left').hide();
+                                }
+                            }
+                            checkHeight();
+                            $var(window).bind('resize orientationchange', checkHeight);
+                        }
+                    });
+                } else {
+                    $var('#error-diamond').text('Minimum budget should be' + check_price);
+                }
+            } else {
+                $var('#error-diamond').text('Please enter you budget and proceed, minimum budget should be ' + check_price);
+            }
+
+        });
+
+        $("#Detailcardfoliyo").on('click', function () {			
+            var shopurl = Shopify.shop;
+			var thisval = $var(this);
+            var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+            var shap = $('#dshape').val();
+            var stones = $('#stones').val();
+            var user_price = $('#budget').val();
+
+            var product_price_convert = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+            var product_price = product_price_convert.replace(/[\$£€]/g, '').replace(/,/g, '');
+
+            var type_choosen = $('.check_type:checked').map(function () {
+                return this.value;
+            }).get();
+            var check_price = $('.ring_price_add').text();//$('#budget').attr('data-default');
+            var maxprice = check_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+            var search_type = 'detail';
+            if (user_price != '') {
+                if (parseFloat(user_price) >= parseFloat(maxprice)) {
+                    $('#error-diamond').text('');
+                    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+' &user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&search_type=' + search_type + '&handle=' + handle+ '&shopurl=' + shopurl + '&page=1';
+					// Enabled on 18-01-2022
+					return;
+					var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&search_type=' + search_type + '&handle=' + handle+ '&shopurl=' + shopurl + '&page=1'+ '&ratio='+chk_ratio;
+					
+					
+                    $var.ajax({
+                        url: post_url,
+                        type: "GET",                        
+                        success: function (response) {                            
+							$('.diamond-data-modal').html(response);
+							//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+							
+							if ($('#modalOpenTrigger').length >0) {
+								var ua = window.navigator.userAgent;
+								var msie = ua.indexOf('MSIE ');
+								var edge = ua.indexOf('Edge/');
+								if (msie > 0 || edge > 0) {			
+									$('#modalOpenTrigger').trigger('click');
+								} else {
+									////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+								}
+							} else {
+								var ua = window.navigator.userAgent;
+								var msie = ua.indexOf('MSIE ');
+								var edge = ua.indexOf('Edge/');
+								if (msie > 0 || edge > 0) {			
+									$('#modalOpenTrigger').trigger('click');
+								} else {
+									////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+								}
+							}	
+						    $('#my-diamond-data-modal .modal-title').hide();
+                            /*
+							var checkHeight = function () {
+                                var w = document.body.clientWidth;
+                                if (w < 768) {
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', '0');
+                                } else {
+                                    var divheight = $('.content-overlay').height();
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', divheight);
+                                }
+                                if (w < 768) {
+                                    $var('.custom-left-show').hide();
+                                    $var('.custom-left').show();
+                                } else {
+                                    $var('.custom-left-show').show();
+                                    $var('.custom-left').hide();
+                                }
+                            }
+                            //checkHeight();
+                            //$var(window).bind('resize orientationchange', checkHeight);
+							*/
+                        }
+                    });
+					
+                } else {
+                    $('#error-diamond').text('Minimum budget should be' + check_price);
+                }
+            } else {
+                $('#error-diamond').text('Please enter you budget and proceed, minimum budget should be ' + check_price);
+            }
+        });
+		
+		$("#DetailSearchDiamond").on('click', function () {			
+            var shopurl = Shopify.shop;
+			var thisval = $var(this);
+            if ($('#product-actions').length >0) {
+				var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+			} else {
+				var handle = $var('#product_handle').val();
+			}
+            var shap = $('#dshape').val();
+            var stones = $('#stones').val();
+            var user_price = $('#budget').val();
+
+            var product_price_convert = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+            var product_price = product_price_convert.replace(/[\$£€]/g, '').replace(/,/g, '');
+
+            var type_choosen = $('.check_type:checked').map(function () {
+                return this.value;
+            }).get();
+            var check_price = $('.ring_price_add').text();//$('#budget').attr('data-default');
+            var maxprice = check_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+            var search_type = 'detail';
+            if (user_price != '') {
+                if (parseFloat(user_price) >= parseFloat(maxprice)) {
+                    $('#error-diamond').text('');
+                    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+' &user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&search_type=' + search_type + '&handle=' + handle+ '&shopurl=' + shopurl + '&page=1';
+					// Enabled on 18-01-2022
+					return;
+					var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&search_type=' + search_type + '&handle=' + handle+ '&shopurl=' + shopurl + '&page=1&theme=default'+ '&ratio='+chk_ratio;
+					
+                    $var.ajax({
+                        url: post_url,
+                        type: "GET",                        
+                        success: function (response) {                            
+							$('.diamond-data-modal').html(response);
+							//$('#my-diamond-data-modal').modal('show');
+							
+							//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+							//$('#my-diamond-data-modal').modal();		
+									
+						    
+                            /*
+							var checkHeight = function () {
+                                var w = document.body.clientWidth;
+                                if (w < 768) {
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', '0');
+                                } else {
+                                    var divheight = $('.content-overlay').height();
+                                    $var('.templateProduct .mar_bottom').css('margin-bottom', divheight);
+                                }
+                                if (w < 768) {
+                                    $var('.custom-left-show').hide();
+                                    $var('.custom-left').show();
+                                } else {
+                                    $var('.custom-left-show').show();
+                                    $var('.custom-left').hide();
+                                }
+                            }
+                            //checkHeight();
+                            //$var(window).bind('resize orientationchange', checkHeight);
+							*/
+                        }
+                    });
+					
+                } else {
+                    $('#error-diamond').text('Minimum budget should be' + check_price);
+                }
+            } else {
+                $('#error-diamond').text('Please enter you budget and proceed, minimum budget should be ' + check_price);
+            }
+        });
+    }
+	if (url.searchParams.get("diamondid") != '') {
+		if (Getsearch_type == 'diamondid') {
+			$('#Fastcardfoliyo').hide();
+			$('#Detailcardfoliyo').hide();
+			 $('.custom-right').hide();
+			setTimeout(function () {
+				$('.custom-right').hide();
+				GetFullDetails(Getdiamondid, details_price, details_final_price , details_handle);
+			}, 500);
+		}
+	}
+
+    $var(document).on('click', '.cardfoliyo_addcart', function () {
+		var shopurl = Shopify.shop;
+        var diamond_ID = $('#diamond_ID').val();
+        var diamond_SKU = $('#diamond_SKU').val();
+        var diamond_PRICE = $('#diamond_PRICE').val().replace(/,/g, '');
+        var diamond_CERTIFICATE = $('#diamond_CERTIFICATE').val();
+        var diamond_SHAPE = $('#diamond_SHAPE').val();
+        var diamond_WEIGHT = $('#diamond_WEIGHT').val();
+        var diamond_COLOR = $('#diamond_COLOR').val();
+        var diamond_CLARITY = $('#diamond_CLARITY').val();
+        var diamond_MEASUREMENT = $('#diamond_MEASUREMENT').val();
+        var diamond_SYMMETRY = $('#diamond_SYMMETRY').val();
+        var diamond_description = $('#diamond_description').val();
+        var product_title = $('#product_title').val();
+        var product_sku = $('#product_sku').val();
+        var product_image = $('#product_image').val();
+        var product_handle = $('#product_handle').val();        
+		var image = mainpath +'/assets/ring.png';	
+		/*
+        $var.post('/cart/add.js', {
+            items: [
+                {
+                    quantity: diamond_PRICE,
+                    //id: '32684956516445',
+					//id: '41719192060145',
+					//id: '39748223991901',
+					id: '41388441272413',
+                    properties: {
+                        'RingTitle': product_title,
+                        'DiamondId': diamond_ID,
+                        'DiamondSku': diamond_SKU,
+                        'DiamondPrice': diamond_PRICE,
+                        'DiamondCertificate': diamond_CERTIFICATE,
+                        'DiamondShape': diamond_SHAPE,
+                        'DiamondWeight': diamond_WEIGHT,
+                        'DiamondColor': diamond_COLOR,
+                        'DiamondClarity': diamond_CLARITY,
+                        'DiamondMeasurement': diamond_MEASUREMENT,
+                        'DiamondSymmetry': diamond_SYMMETRY,
+                        'ProductDescription': diamond_description,
+                        'handle': product_handle,
+                        'image': product_image,
+                  
+                    }
+                }
+            ],
+            success: function (response) {
+                setTimeout(function () {
+                    window.location.href = '/cart';					
+                }, 1000);
+            }
+        });
+		*/
+		
+		
+		$var.ajax({
+		  type: 'POST',
+		  url: '/cart/add.js',
+		  data: {
+			quantity: diamond_PRICE,
+			id: '41388441272413',
+			properties: {
+				'RingTitle': product_title,
+				'DiamondId': diamond_ID,
+				'DiamondSku': diamond_SKU,
+				'DiamondPrice': diamond_PRICE,
+				'DiamondCertificate': diamond_CERTIFICATE,
+				'DiamondShape': diamond_SHAPE,
+				'DiamondWeight': diamond_WEIGHT,
+				'DiamondColor': diamond_COLOR,
+				'DiamondClarity': diamond_CLARITY,
+				'DiamondMeasurement': diamond_MEASUREMENT,
+				'DiamondSymmetry': diamond_SYMMETRY,
+				'ProductDescription': diamond_description,
+				'handle': product_handle,
+				'image': product_image,		  
+			}
+		  },
+		  dataType: 'json',
+		  success: function(response) {
+			// Upon successful addition to cart
+			// Redirect to the cart page after 1 second
+			setTimeout(function() {
+			  window.location.href = '/cart';
+			}, 1000);
+		  },
+		  error: function(XMLHttpRequest, textStatus) {
+			console.log('Error: ' + textStatus);
+			// Handle error here
+		  }
+		});
+		
+		
+		/*
+		let formData = {
+		 'items': [{
+		  //'id': 39748223991901,
+		  'id': 41388441272413,
+		  'quantity': diamond_PRICE,
+		  'properties': {
+					'RingTitle': product_title,
+					'DiamondId': diamond_ID,
+					'DiamondSku': diamond_SKU,
+					'DiamondPrice': diamond_PRICE,
+					'DiamondCertificate': diamond_CERTIFICATE,
+					'DiamondShape': diamond_SHAPE,
+					'DiamondWeight': diamond_WEIGHT,
+					'DiamondColor': diamond_COLOR,
+					'DiamondClarity': diamond_CLARITY,
+					'DiamondMeasurement': diamond_MEASUREMENT,
+					'DiamondSymmetry': diamond_SYMMETRY,
+					'ProductDescription': diamond_description,
+					'handle': product_handle,
+					'image': product_image,
+			  
+				}
+		  }]
+		};
+		fetch(window.Shopify.routes.root + 'cart/add.js', {
+		  method: 'POST',
+		  headers: {
+			'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify(formData)
+		})
+		.then(response => {
+		  return response.json();
+		})
+		.catch((error) => {
+		  console.error('Error:', error);
+		});
+		*/
+			
+
+    });
+    $var('body').on('click', 'div#show_cardfoliyo_list button.back_search', function () {
+        var thisval = $var(this);
+        var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');
+        window.location.href = '/products/' + handle;
+    });
+
+    $var('body').on('click', '#refinesubmitsearch', function () {
+        $var(this).text($(this).text() == 'REFINE SEARCH' ? 'CLOSE SEARCH' : 'REFINE SEARCH');
+        //$var('.filter-search').show( "slow" );
+        $var('.filter-search').fadeToggle(500);
+        var position = $var("#select_shape").offset().top - 180;
+        $var("html, body").animate({scrollTop: position}, 1000);
+    });
+	
+	$var('body').on('focus click', 'input',  function(e){
+        if(this.id=='size_from'){
+			$var(this).val('');
+		}else if(this.id=='size_to'){
+			$var(this).val('');
+		}else if(this.id=='budget_price'){
+			$var(this).val('');
+		}
+    });
+	
+	
+
+    $var("body").on('click', 'button.btn.submitsearchdata', function () {
+		console.log('submitsearchdata triggered');
+        var product_id = $('#shopify_product_id').val();
+        var handle = $('#shopify_product_handle').val();
+		var theme = $('#theme').val();
+        var shap = $('#shopify_product_shape').val();
+        var stone = $('#shopify_product_stone').val();
+        var ratio = $('#shopify_product_ratio').val();
+		var shopurl = Shopify.shop;
+        var chk_ratio = '';
+        if(ratio == ''){
+            chk_ratio = '';
+        }else{
+            chk_ratio = ratio;
+        }
+
+        var type_choosen = $('.chooice_dimond_type:checked').map(function () {
+            return this.value;
+        }).get();
+
+        var size_from = $('#size_from').val();
+        var size_to = $('#size_to').val();
+        var user_price = $('#budget_price').val();
+        var cut_from = $('#cut_from').val();
+        var cut_to = $('#cut_to').val();
+        var polish_from = $('#polish_from').val();
+        var polish_to = $('#polish_to').val();
+        var symmetry_from = $('#symmentry_from').val();
+        var symmetry_to = $('#symmentry_to').val();
+        var color = $('.check_color_type:checked').map(function () {
+            return this.value;
+        }).get();
+        var clarity = $('.check_clarity_type:checked').map(function () {
+            return this.value;
+        }).get();
+        var fluorescence = $('.fluorescence:checked').map(function () {
+            return this.value;
+        }).get();
+        var search_type = 'refine';
+        var product_price = $var('#shopify_product_price').val();
+        
+//        window.location.href = '/a/productdetails?shape=' + shap + '&stones=1&ratio=&user_price=' + user_price + 
+//                '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + 
+//                '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&handle=' + handle + 
+//                '&size_from=' + size_from + '&size_to=' + size_to + 
+//                '&cut_from=' + cut_from + '&cut_to=' + cut_to + '&polish_from=' + polish_from + 
+//                '&polish_to=' + polish_to + '&symmetry_to=' + symmetry_to + '&symmetry_from=' + symmetry_from + 
+//                '&fluorescence=' + fluorescence + '';
+        show_animation();
+        var post_url = mainpath + '/ShopifyFront/ProductRefineSearch';
+        $.ajax({
+            url: post_url,
+            type: "POST",
+            data: {
+                'shape': shap, 'stones': stone,'ratio':chk_ratio, 'user_price': user_price, 'clarity': clarity,'type_choosen':type_choosen,
+                'product_id': product_id, 'color': color, 'search_type': search_type, 'product_price': product_price,
+                'handle': handle, 'size_from': size_from, 'size_to': size_to, 'cut_from': cut_from,
+                'cut_to': cut_to, 'polish_from': polish_from, 'polish_to': polish_to, 'symmetry_to': symmetry_to,
+                'symmetry_from': symmetry_from, 'fluorescence': fluorescence, 'shopurl': shopurl, 'theme': theme,
+            },
+            success: function (response) {
+				console.log('theme '+theme);
+                hide_animation();
+                $('#check_search_types').val(search_type);
+                $('.ProductDiamondDetails').hide();
+                $('.ProductRefineDetails').html(response);
+				if ($('#modalOpenTrigger').length >0) {
+					var ua = window.navigator.userAgent;
+					var msie = ua.indexOf('MSIE ');
+					var edge = ua.indexOf('Edge/');
+					if (msie > 0 || edge > 0) {			
+						$var('#modalOpenTrigger').trigger('click');
+					} else {
+						$var('#my-diamond-data-modal').modal({show:true});
+					}
+				} else {
+					var ua = window.navigator.userAgent;
+					var msie = ua.indexOf('MSIE ');
+					var edge = ua.indexOf('Edge/');
+					if (msie > 0 || edge > 0) {			
+						$var('#modalOpenTrigger').trigger('click');
+					} else {
+						$var('#my-diamond-data-modal').modal({show:true});
+					}
+				}	
+				$('#my-diamond-data-modal .modal-title').show();
+				
+            }
+        });
+    });
+});
+
+ function show_animation()
+{
+    $('#saving_container').css('display', 'block');
+    $('#saving').css('opacity', '.8');
+}
+
+function hide_animation()
+{
+    $('#saving_container').fadeOut();
+}
+
+
+function GetMoreLikeDetails(color, clarity,ratio , gethandle = '') {
+    var product_id = meta.product.id;
+    var chk_ratio = '';
+    if(ratio == ''){
+        chk_ratio = '';
+    }else{
+        chk_ratio = ratio;
+    }
+    var thisval = $var(this);
+	var handle  = gethandle;
+    //var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');//commented on 13-10-2021
+    //var handle  = $('.wls .wishlist').attr('data-wishlisthandle');
+    var shap = $('#dshape').val();
+    var stones = $('#stones').val();
+    var user_price = $('#budget').val();
+	var shopurl = Shopify.shop;
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var type_choosen = $('.check_type:checked').map(function () {
+        return this.value;
+    }).get();
+    var search_type = 'like';
+    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '';
+	// Enabled on 18-01-2022
+	return;
+	
+	var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '&page=1';
+	if ($('#modalOpenTrigger').length >0) {
+		var ua = window.navigator.userAgent;
+		var msie = ua.indexOf('MSIE ');
+		var edge = ua.indexOf('Edge/');
+		if (msie > 0 || edge > 0) {			
+			$('#modalOpenTrigger').trigger('click');
+		} else {
+			if ($('#my-diamond-data-modal').modal) {
+				////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+			} else {
+				$('#modalOpenTrigger').trigger('click');
+			}
+		}
+	} else {
+		var ua = window.navigator.userAgent;
+		var msie = ua.indexOf('MSIE ');
+		var edge = ua.indexOf('Edge/');
+		if (msie > 0 || edge > 0) {			
+			$('#modalOpenTrigger').trigger('click');
+		} else {
+			if ($('#my-diamond-data-modal').modal) {
+				////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+			} else {
+				$('#modalOpenTrigger').trigger('click');
+			}
+		}
+	}			
+	$('#my-diamond-data-modal .modal-title').show();
+	$('.diamond-data-modal').load(post_url,function(){
+		$('.col-lg-24.filter-search').hide();
+		$('.button-center.col-sm-6.col-lg-4').show();
+		
+		//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+		//$('#my-diamond-data-modal').modal();		
+		
+	});
+
+
+}
+
+function GetMoreLikeDiamondDetails(color, clarity,ratio , gethandle = '') {
+	show_animation()
+    var product_id = meta.product.id;
+    var chk_ratio = '';
+    if(ratio == ''){
+        chk_ratio = '';
+    }else{
+        chk_ratio = ratio;
+    }
+    var thisval = $var(this);
+	var handle  = gethandle;
+    //var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');//commented on 13-10-2021
+    //var handle  = $('.wls .wishlist').attr('data-wishlisthandle');
+    var shap = $('#dshape').val();
+    var stones = $('#stones').val();
+    var user_price = $('#budget').val();
+	var shopurl = Shopify.shop;
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var type_choosen = $('.check_type:checked').map(function () {
+        return this.value;
+    }).get();
+    var search_type = 'like';
+    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '';
+	// Enabled on 18-01-2022
+	return;
+	
+	var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '&page=1&theme=default';
+	
+	
+	$('.diamond-data-modal').load(post_url,function(){
+		hide_animation();
+		$('.col-lg-24.filter-search').hide();
+		$('.button-center.col-sm-6.col-lg-4').show();
+		if ($('#modalOpenTrigger').length >0) {
+			var ua = window.navigator.userAgent;
+			var msie = ua.indexOf('MSIE ');
+			var edge = ua.indexOf('Edge/');
+			if (msie > 0 || edge > 0) {	
+				console.log('xxxxxxx');
+				$('#modalOpenTrigger').trigger('click');
+			} else {
+				if ($('#my-diamond-data-modal').modal) {
+					console.log('yyyyyyyy');
+					////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+				} else {
+					console.log('zzzzzz');
+					$('#modalOpenTrigger').trigger('click');
+				}
+			}
+		} else {
+			////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+		}		
+		$('#my-diamond-data-modal .modal-title').show();
+		//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+		//$('#my-diamond-data-modal').modal();		
+		
+	});
+
+
+}
+
+function GetMoreLikeDetailsData(color, clarity,ratio='' , gethandle = '') {
+    var product_id = meta.product.id;
+    var chk_ratio = '';
+    if(ratio == ''){
+        chk_ratio = '';
+    }else{
+        chk_ratio = ratio;
+    }
+    var thisval = $var(this);
+	var handle  = gethandle;
+    //var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');//commented on 13-10-2021
+    //var handle  = $('.wls .wishlist').attr('data-wishlisthandle');
+    var shap = $('#dshape').val();
+    var stones = $('#stones').val();
+    var user_price = $('#budget').val();
+	var shopurl = Shopify.shop;
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var type_choosen = $('.check_type:checked').map(function () {
+        return this.value;
+    }).get();
+    var search_type = 'like';
+    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '';
+	// Enabled on 18-01-2022
+	return;
+	
+	var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '&page=1';
+	$('.diamond-data-modal').load(post_url,function(){
+		//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+		//$('#my-diamond-data-modal').modal();
+		if ($('#modalOpenTrigger').length >0) {
+			var ua = window.navigator.userAgent;
+			var msie = ua.indexOf('MSIE ');
+			var edge = ua.indexOf('Edge/');
+			if (msie > 0 || edge > 0) {			
+				$('#modalOpenTrigger').trigger('click');
+			} else {
+				////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+			}
+		} else {
+			var ua = window.navigator.userAgent;
+			var msie = ua.indexOf('MSIE ');
+			var edge = ua.indexOf('Edge/');
+			if (msie > 0 || edge > 0) {			
+				$('#modalOpenTrigger').trigger('click');
+			} else {
+				////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+			}
+		}		
+		$('#my-diamond-data-modal .modal-title').show();
+		$('.col-lg-24.filter-search').hide();
+		$('.button-center.col-sm-6.col-lg-4').show();
+	});
+
+
+}
+
+function GetMoreLikeDiamondDetailsData(color, clarity,ratio='' , gethandle = '') {
+    var product_id = meta.product.id;
+    var chk_ratio = '';
+    if(ratio == ''){
+        chk_ratio = '';
+    }else{
+        chk_ratio = ratio;
+    }
+    var thisval = $var(this);
+	var handle  = gethandle;
+    //var handle = thisval.parents('div.row').find('div.product-detail-wrapper div#product-information div.wls a.wish-list').data('wishlisthandle');//commented on 13-10-2021
+    //var handle  = $('.wls .wishlist').attr('data-wishlisthandle');
+    var shap = $('#dshape').val();
+    var stones = $('#stones').val();
+    var user_price = $('#budget').val();
+	var shopurl = Shopify.shop;
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var type_choosen = $('.check_type:checked').map(function () {
+        return this.value;
+    }).get();
+    var search_type = 'like';
+    window.location.href = '/a/productdetails?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '';
+	// Enabled on 18-01-2022
+	return;
+	
+	var post_url = mainpath + '/ShopifyFront/GetProductDetailsModal'+'?shape=' + shap + '&stones=' + stones + '&ratio='+chk_ratio+'&user_price=' + user_price + '&product_id=' + product_id + '&type_choosen=' + type_choosen + '&product_price=' + product_price + '&clarity=' + clarity + '&color=' + color + '&search_type=' + search_type + '&shopurl=' + shopurl + '&handle=' + handle + '&page=1&theme=default';
+	$('.diamond-data-modal').load(post_url,function(){
+		//////$('#my-diamond-data-modal').modal({show:true});//Commented on 18-01-2022
+		//$('#my-diamond-data-modal').modal();
+		
+		$('.col-lg-24.filter-search').hide();
+		$('.button-center.col-sm-6.col-lg-4').show();
+	});
+
+
+}
+
+function GetFullDetails(Diamondid, saleprice, SPECIALPRICE , gethandle = '') {
+    show_animation();
+    $('.custom-left-show').hide();
+    $('#list-detail').hide();
+    $('.custom-right').hide();
+    $('.templateProduct .mar_bottom').css('margin-bottom', '0');
+    $('.cardfoliyo_addcart').show();
+    $('.custom-hide').show();
+    $('.custom-right').hide();
+    $('.custom-left').show();
+    $('.custom-description').show();
+    $('.content-overlay').css('position', 'relative');
+    $('.content-overlay').css('left', '0');
+    $('.content-overlay').css('top', '0');
+    $('.content-overlay').addClass('col-lg-12 col-sm-12');
+    //$('.product-information .custom-hide').show();
+    var url = window.location.pathname;
+    var current_page = url.substr(url.lastIndexOf('/') + 1);
+    var location_url = window.location;
+    var url = new URL(location_url);
+    var handle = gethandle;
+
+
+    var search_type = 'diamondid';
+    var product_id = meta.product.id;
+    var post_url = mainpath + '/ShopifyFront/GetProductFullDetails';
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var shopurl = Shopify.shop;
+	//console.log(shopurl);
+	
+    var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var saleprice = saleprice.replace(/[\$£€]/g, '');
+    var SPECIALPRICE = SPECIALPRICE.replace(/[\$£€]/g, '');
+    $.ajax({
+        url: post_url,
+        type: "POST",
+        data: {'search_type': search_type, 'diamondid': Diamondid, 'product_price': product_price, 'saleprice': saleprice, 'SPECIALPRICE': SPECIALPRICE, 'product_id': product_id,'handle':handle,'shopurl':shopurl},
+        success: function (response) {
+            hide_animation();
+            $('.custom-right').hide();
+            $('.custom-left-show').hide();
+            $('#show_cardfoliyo_list').html(response);
+            $('#Fastcardfoliyo').hide();
+            $('#Detailcardfoliyo').hide();
+            $('.help_btn').hide();
+            $('#list-detail').hide();	
+			/* Added for default theme */
+			
+			$('.product-single__media-group').show();
+			$('.product-single__title').show();
+			$('.product-form').hide();
+			$('.social-sharing').hide();
+			$('.product-template__container .product-single .grid__item.medium-up--two-fifths').css('width', '50%');
+			
+			/* End for default theme */
+			
+			
+			//$('#my-diamond-data-modal').modal({show:false});		
+			$('#my-diamond-data-modal .close').click();			
+			$('#my-diamond-data-modal .modal-title').show();
+            var checkHeight = function () {
+                var w = document.body.clientWidth;
+                if (w < 768) {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                } else {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                }
+            }
+            checkHeight();
+            $var(window).bind('resize orientationchange', checkHeight);
+        }
+    });
+}
+
+function GetFullDetailsDiamond(Diamondid, saleprice, SPECIALPRICE , gethandle = '') {
+    show_animation();
+    $('.custom-left-show').hide();
+    $('#list-detail').hide();
+    $('.custom-right').hide();
+    $('.templateProduct .mar_bottom').css('margin-bottom', '0');
+    $('.cardfoliyo_addcart').show();
+    $('.custom-hide').show();
+    $('.custom-right').hide();
+    $('.custom-left').show();
+    $('.custom-description').show();
+    $('.content-overlay').css('position', 'relative');
+    $('.content-overlay').css('left', '0');
+    $('.content-overlay').css('top', '0');
+    $('.content-overlay').addClass('col-lg-12 col-sm-12');
+    //$('.product-information .custom-hide').show();
+    var url = window.location.pathname;
+    var current_page = url.substr(url.lastIndexOf('/') + 1);
+    var location_url = window.location;
+    var url = new URL(location_url);
+    var handle = gethandle;
+
+
+    var search_type = 'diamondid';
+    var product_id = meta.product.id;
+    var post_url = mainpath + '/ShopifyFront/GetProductFullDetails';
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var shopurl = Shopify.shop;
+	//console.log(shopurl);
+	
+    var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var saleprice = saleprice.replace(/[\$£€]/g, '');
+    var SPECIALPRICE = SPECIALPRICE.replace(/[\$£€]/g, '');
+    $.ajax({
+        url: post_url,
+        type: "POST",
+        data: {'search_type': search_type, 'diamondid': Diamondid, 'product_price': product_price, 'saleprice': saleprice, 'SPECIALPRICE': SPECIALPRICE, 'product_id': product_id,'handle':handle,'shopurl':shopurl},
+        success: function (response) {
+            hide_animation();
+			$('.product-single__media-group').show();
+			$('.product-single__title').show();
+			$('.product-form').hide();
+			$('.social-sharing').hide();
+			$('.product-template__container .product-single .grid__item.medium-up--two-fifths').css('width', '50%');
+            $('.custom-right').hide();
+            $('.custom-left-show').hide();
+            $('#show_cardfoliyo_list').html(response);
+            $('#Fastcardfoliyo').hide();
+            $('#Detailcardfoliyo').hide();
+            $('.help_btn').hide();
+            $('#list-detail').hide();					
+			
+			//$('#my-diamond-data-modal').modal({show:false});		
+			$('#my-diamond-data-modal .close').click();
+			//$('#my-diamond-data-modal').modal('hide');			
+			$('#my-diamond-data-modal .modal-title').show();
+            var checkHeight = function () {
+                var w = document.body.clientWidth;
+                if (w < 768) {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                } else {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                }
+            }
+            checkHeight();
+            $var(window).bind('resize orientationchange', checkHeight);
+        }
+    });
+}
+
+function GetFullDetailsData(Diamondid, saleprice, SPECIALPRICE , gethandle = '') {
+	
+    //$('#my-diamond-data-modal').modal({show:false});		
+	$('#my-diamond-data-modal .close').click();		
+	$('#my-diamond-data-modal .modal-title').show();
+    show_animation();
+    $('.custom-left-show').hide();
+    $('#list-detail').hide();
+    $('.custom-right').hide();
+    $('.templateProduct .mar_bottom').css('margin-bottom', '0');
+    $('.cardfoliyo_addcart').show();
+    $('.custom-hide').show();
+    $('.custom-right').hide();
+    $('.custom-left').show();
+    $('.custom-description').show();
+    $('.content-overlay').css('position', 'relative');
+    $('.content-overlay').css('left', '0');
+    $('.content-overlay').css('top', '0');
+    $('.content-overlay').addClass('col-lg-12 col-sm-12');
+    //$('.product-information .custom-hide').show();
+    var url = window.location.pathname;
+    var current_page = url.substr(url.lastIndexOf('/') + 1);
+    var location_url = window.location;
+    var url = new URL(location_url);
+    var handle = gethandle;
+
+
+    var search_type = 'diamondid';
+    var product_id = meta.product.id;
+    var post_url = mainpath + '/ShopifyFront/GetProductFullDetails';
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var shopurl = Shopify.shop;
+	//console.log(shopurl);
+	
+    var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var saleprice = saleprice.replace(/[\$£€]/g, '');
+    var SPECIALPRICE = SPECIALPRICE.replace(/[\$£€]/g, '');
+    $.ajax({
+        url: post_url,
+        type: "POST",
+        data: {'search_type': search_type, 'diamondid': Diamondid, 'product_price': product_price, 'saleprice': saleprice, 'SPECIALPRICE': SPECIALPRICE, 'product_id': product_id,'handle':handle,'shopurl':shopurl},
+        success: function (response) {
+            hide_animation();
+            $('.custom-right').hide();
+            $('.custom-left-show').hide();
+            $('#show_cardfoliyo_list').html(response);
+            $('#Fastcardfoliyo').hide();
+            $('#Detailcardfoliyo').hide();
+            $('.help_btn').hide();
+            $('#list-detail').hide();
+            var checkHeight = function () {
+                var w = document.body.clientWidth;
+                if (w < 768) {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                } else {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                }
+            }
+            checkHeight();
+            $var(window).bind('resize orientationchange', checkHeight);
+        }
+    });
+}
+
+
+function GetFullDetailsDiamondData(Diamondid, saleprice, SPECIALPRICE , gethandle = '') {
+	//$('#my-diamond-data-modal').modal('hide');
+    //$('#my-diamond-data-modal').modal({show:false});		
+	$('#my-diamond-data-modal .close').click();
+	$('#my-diamond-data-modal .modal-title').show();
+    show_animation();
+    $('.custom-left-show').hide();
+    $('#list-detail').hide();
+    $('.custom-right').hide();
+    $('.templateProduct .mar_bottom').css('margin-bottom', '0');
+    $('.cardfoliyo_addcart').show();
+    $('.custom-hide').show();
+    $('.custom-right').hide();
+    $('.custom-left').show();
+    $('.custom-description').show();
+    $('.content-overlay').css('position', 'relative');
+    $('.content-overlay').css('left', '0');
+    $('.content-overlay').css('top', '0');
+    $('.content-overlay').addClass('col-lg-12 col-sm-12');
+    //$('.product-information .custom-hide').show();
+    var url = window.location.pathname;
+    var current_page = url.substr(url.lastIndexOf('/') + 1);
+    var location_url = window.location;
+    var url = new URL(location_url);
+    var handle = gethandle;
+
+
+    var search_type = 'diamondid';
+    var product_id = meta.product.id;
+    var post_url = mainpath + '/ShopifyFront/GetProductFullDetails';
+    var product_price = $var('#budget').attr('data-default');//$('.detail-price .price').text();
+	var shopurl = Shopify.shop;
+	//console.log(shopurl);
+	
+    var product_price = product_price.replace(/[\$£€]/g, '').replace(/,/g, '');
+    var saleprice = saleprice.replace(/[\$£€]/g, '');
+    var SPECIALPRICE = SPECIALPRICE.replace(/[\$£€]/g, '');
+    $.ajax({
+        url: post_url,
+        type: "POST",
+        data: {'search_type': search_type, 'diamondid': Diamondid, 'product_price': product_price, 'saleprice': saleprice, 'SPECIALPRICE': SPECIALPRICE, 'product_id': product_id,'handle':handle,'shopurl':shopurl},
+        success: function (response) {
+            hide_animation();
+            $('.custom-right').hide();
+            $('.custom-left-show').hide();
+            $('#show_cardfoliyo_list').html(response);
+            $('#FastDiamondDefault').hide();
+            $('#DetailSearchDiamond').hide();
+            $('.help_btn').hide();
+            $('#list-detail').hide();
+            var checkHeight = function () {
+                var w = document.body.clientWidth;
+                if (w < 768) {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                } else {
+                    $var('.custom-left-show').hide();
+                    $var('.custom-left').show();
+                }
+            }
+            checkHeight();
+            $var(window).bind('resize orientationchange', checkHeight);
+        }
+    });
+}
+

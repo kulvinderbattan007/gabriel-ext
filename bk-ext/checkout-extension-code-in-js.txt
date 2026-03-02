@@ -1,0 +1,190 @@
+const localDeliveryHTML = `<div class="local_data hide">
+<div class="local_info">
+  <div class="local_delivery_option">
+    <div class="main_options">
+      <div class="radio_btn">
+        <input type="radio" id="localDelivery" name="attributes[Order Type]" value="Local Delivery" class="local_delivery">
+        <label for="localDelivery">
+          <div class="content">
+            <div class="icon_new"><img loading="lazy" src="//meatnbone.com/cdn/shop/files/BUS.png?v=1608533694"></div>
+            <span>Local Delivery(South Florida)</span>
+          </div>
+        </label>
+      </div>
+      <div class="radio_btn">
+        <input type="radio" id="storePickup" name="attributes[Order Type]" value="Store Pickup" class="local_delivery">
+        <label for="storePickup">
+          <div class="content">
+            <div class="icon_new"><img loading="lazy" src="//meatnbone.com/cdn/shop/files/icon2_af73e548-791a-4be7-9f32-784b5fc1b66c.png?v=1608533701"></div>
+            <span>Store Pickup(South Florida)</span>
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="sibling_option">
+      <div class="local_sibling sibling hide">
+        <div class="radio_btn mine_data">
+          <input type="radio" id="2hr" name="attributes[Local Order Type]" data-id="7267570843678" value="Now (2 Hr)">
+          <label for="2hr">
+            <span>2 Hour Delivery (Available Mon-Sat until 7pm. Sun until 4PM)</span><span class="right_content hrsu2">$13.19</span>
+          </label>
+        </div>
+        <div class="radio_btn mine_data customSameMine">
+          <input type="radio" id="same_day" name="attributes[Local Order Type]" data-id="7267570876446" value="Same Day">
+          <label for="same_day">
+            <span>Same Day Delivery (Available until 4PM)</span><span class="right_content hsames">$9.19</span>
+          </label>
+        </div>
+         <div class="radio_btn mine_data custom_sameOrders hide">
+          <input type="radio" id="same_day_order" name="attributes[Local Order Type]" data-id="39974568493155" value="Same Day order">
+          <label for="same_day_order">
+            <span>Same Day (FREE on orders above $125. Deliverered before 8pm)</span><span class="right_content">FREE</span>
+          </label>
+        </div>
+        <div class="radio_btn">
+          <input type="radio" id="schedule" name="attributes[Local Order Type]" value="Schedule">
+          <label for="schedule">
+            <span>Scheduled Delivery</span><span class="right_content">FREE</span>
+          </label>
+        </div>
+      </div>
+      <div class="store_sibling sibling hide">
+        <div class="radio_btn">
+          <input type="radio" id="CoralWay" name="attributes[Store Delivery-Location]" value="CoralWay">
+          <label for="CoralWay">
+            <span class="mainContent"><b style="font-weight: bold !important">2229 Coral Way. Miami, FL 33145</b><p> Phone: (786) 633-6179</p></span>
+            <span class="lowContent">
+              <b>Store Hours: </b>
+              <p>Mon-Sat: 9AM-8PM</p>
+              <p>Sun: 9AM-5PM</p>
+            </span>
+          </label>
+        </div>
+        <div class="radio_btn">
+          <input type="radio" id="SampleRD" name="attributes[Store Delivery-Location]" value="SampleRD">
+          <label for="SampleRD">
+            <span class="mainContent"><b style="font-weight: bold !important">9813 W Sample Rd. Coral Springs, FL 33065</b><p> Phone: (954) 752-6290</p></span>
+          	<span class="lowContent">
+              <b>Store Hours: </b>
+              <p>Mon-Sat: 9AM-7PM</p>
+              <p>Sun: 9AM-5PM</p>
+            </span>
+          </label>
+        </div>
+        <div class="radio_btn">
+          <input type="radio" id="Pinecrest" name="attributes[Store Delivery-Location]" value="Pinecrest">
+          <label for="Pinecrest">
+            <span class="mainContent"><b style="font-weight: bold !important">12443 S Dixie Hwy, Miami, FL 33156</b><p> Phone: (305) 964-5114</p></span>
+          	<span class="lowContent">
+              <b>Store Hours: </b>
+              <p>Mon-Sat: 10AM-7PM</p>
+              <p>Sun: 10AM-5PM</p>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="schdule_picker sibling hide">
+        <div class="datePicker">
+          <label for="huratips-delivery-date">Pick a date:</label>
+          <input id="huratips-delivery-date" type="text" name="attributes[date]" value="" readonly="" class="hasDatepicker">
+        </div>
+        <div class="picker_time">
+          <label class="time_label full-width" name="time_picker2"> Select Delivery Time</label>
+          <div class="inner_delivery_options">
+            <input type="radio" id="eleven_to_two" name="attributes[Order Timeframes]" class="time_picker" value="11am - 2pm" checked="">
+            <label class="time_label" for="eleven_to_two" name="time_picker">11am - 2pm</label>
+          </div>
+          <div class="inner_delivery_options">
+            <input type="radio" id="two_to_five" name="attributes[Order Timeframes]" class="time_picker" value="2pm - 5pm">
+            <label class="time_label" for="two_to_five" name="time_picker">2pm - 5pm</label>
+          </div>
+          <div class="inner_delivery_options">
+            <input type="radio" id="five_to_eight" name="attributes[Order Timeframes]" class="time_picker" value="5pm - 8pm">
+            <label class="time_label" for="five_to_eight" name="time_picker">5pm - 8pm</label>
+          </div>
+        </div>
+      </div>
+      <div class="storeDatePicker hide">
+        <div class="datePicker">
+          <label for="huratips-delivery-date2">Pick a date:</label>
+          <input id="huratips-delivery-date2" type="text" name="attributes[date2]" value="" readonly="" class="hasDatepicker">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="confirm_data">
+    <a href="javascript:void(0)" class="confirm_btn">Confirm Selection</a>
+  </div>
+  <div class="local_delivery_data">
+    <div class="title">Delivery Information</div>
+    <div class="content"><p><b>SAME DAY DELIVERY:</b> Free for orders over $125. Order will be delivered BEFORE 8 pm on the day of your order. <br><br><b>FREE SCHEDULED DELIVERY: </b>Select when you want your delivery: Tomorrow, in a week or in 3 months... it is FREE! (planning ahead pays off!) <br><br>You will be notified once your order is out for delivery. Our delivery driver will also text you when he is 15 minutes away from the delivery address.</p>
+<p><b>STORE PICK-UP:</b> You can drop by anytime on your scheduled date to pick up your order.<br><br></p>
+<h2>FLORIDA CUSTOMERS<br>(Outside Miami-Dade/Broward):</h2>
+<p>$10 Flat Rate 2-Day Shipping / $30 Overnight <br><br>We ship <u>Monday to Friday, </u>if FedEx/UPS deliver on weekends in your area your order will be delivered on a weekend.&nbsp;If you need your order overnight, please pay for $30 next-day shipping.</p>
+<p>Orders will ship based on inventory availability, most orders are fulfilled in less than 24 hours. However, depending on the product, fulfillment may take up to 4 days. If you require something faster, CONTACT US.</p>
+<p><br><b>🎁 Buying an electronic-Gift card?</b> <br>Just select STORE PICKUP with Today's date and process your payment!</p></div>
+  </div>
+</div>
+</div>
+
+<style>
+.hide{
+display:none;
+}
+</style>`;
+
+const localzipcodes = [
+  33436,33426,33431,33433,33434,33435,33437,33444,33446,33472,33473,33483,33487,33498,33010,33012,33013,33014,33015,33016,33018,33030,33031,33032,33033,33034,33035,33054,33056,33107,33039,33109,33055,33110,33112,33121,33122,33125,33126,33128,33129,33130,33131,33132,33134,33135,33136,33139,33140,33141,33142,33127,33143,33144,33145,33146,33147,33133,33148,33150,33154,33137,33138,33155,33156,33157,33158,33160,33161,33162,33165,33166,33167,33149,33168,33169,33170,33172,33173,33174,33175,33176,33177,33178,33179,33181,33182,33183,33184,33185,33186,33187,33188,33189,33190,33194,33195,33196,33199,33002,33011,33017,33090,33180,33092,33101,33102,33111,33114,33116,33119,33124,33151,33152,33193,33153,33159,33163,33164,33197,33222,33231,33233,33234,33238,33239,33242,33243,33245,33247,33255,33256,33257,33261,33265,33266,33269,33280,33283,33296,33299,33004,33008,33009,33019,33020,33021,33022,33023,33024,33025,33026,33027,33028,33029,33060,33061,33062,33063,33064,33065,33066,33067,33068,33069,33071,33072,33073,33074,33075,33076,33077,33081,33082,33083,33084,33093,33097,33301,33302,33303,33304,33305,33306,33307,33308,33309,33310,33311,33312,33313,33314,33315,33316,33317,33318,33319,33320,33321,33322,33323,33324,33325,33326,33327,33328,33329,33330,33331,33332,33334,33335,33336,33337,33338,33339,33340,33345,33346,33348,33349,33351,33355,33359,33388,33394,33441,33442,33443,33428,33445,33486,33484,33432,33496
+];
+
+import { extension, Banner } from "@shopify/ui-extensions/checkout";
+
+export default extension("purchase.checkout.block.render", (root, api) => {
+  const { i18n } = api;
+const zips = api.shippingAddress.current.zip;
+console.log(api);
+console.log('Zip Code : '+zips);
+  
+    if (api.shippingAddress && api.shippingAddress.current) {
+      const zip = api.shippingAddress.current.zip;
+
+      if (zip && localzipcodes.includes(parseInt(zip, 10))) {
+        const bannerMessage = 'You are in local Zone ' + zip;
+        const banner = root.createComponent(Banner, {}, bannerMessage, i18n.translate('welcome', { target: extension.target }));
+        root.appendChild(banner);
+      }
+    }
+ 
+
+  
+ 
+});
+
+
+/*export default extension("purchase.checkout.block.render", (root, api) => {
+  const { extension, i18n } = api;
+  console.log(api);
+ // Function to update the shipping address information
+ const {zip} = api.shippingAddress.current;
+ 
+ 
+ if (api.shippingAddress && api.shippingAddress.current) {
+      const zips = api.shippingAddress.current.zip;
+      //console.log(zips);
+      if (zips && localzipcodes.includes(parseInt(zips, 10))) {
+		  
+		 // const localDeliveryHtml = root.createComponent(localDeliveryHTML);
+         // root.appendChild(localDeliveryHtml);
+		 //root.innerHTML = localDeliveryHTML;
+		  console.log('zip code value = '+zips);
+  root.appendChild(
+    root.createComponent(
+      Banner,
+      { },
+	   'You are in local Zone '+zips,
+      i18n.translate('welcome', { target: extension.target })
+    )
+  );
+    }
+    }
+});*/

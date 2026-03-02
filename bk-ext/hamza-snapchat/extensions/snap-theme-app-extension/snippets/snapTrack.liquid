@@ -1,0 +1,13 @@
+{%if shop.metafields.SnapchatPixelCode != blank %}
+  <div class="snapPixels" style="display:none;">
+    {%- for field in shop.metafields.SnapchatPixelCode -%}
+    	{%assign pixelCode = field | last %}
+    	<p>{{pixelCode}}</p>
+    {%- endfor -%}
+  </div>
+  <meta name="shopCurrency" content="{{shop.currency}}" />
+  {% if shop.customer_accounts_enabled and customer %}
+      <meta name="customerEmail" content="{{customer.email}}" />
+  {%endif%}
+	<script async src="https://snap.pixelinstall.xyz/resources/js/snaptrack.js?v={{ 'now' | date: '%s' }}"></script>
+{%endif%}

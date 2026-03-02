@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Snapchat Pixel Manager"
+client_id = "390b4d5bcf162aacd4c8825b03921c24"
+application_url = "https://snap.pixelinstall.xyz"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://snap.pixelinstall.xyz/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+  [webhooks.privacy_compliance]
+  customer_deletion_url = "https://snap.pixelinstall.xyz/webhook/customers-redact"
+  customer_data_request_url = "https://snap.pixelinstall.xyz/webhook/shop-redact"
+  shop_deletion_url = "https://snap.pixelinstall.xyz/webhook/customers-data-request"
+
+[pos]
+embedded = false

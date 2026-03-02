@@ -1,0 +1,217 @@
+{%if shop.metafields.TiktokPixelCode != blank or shop.metafields.TiktokPixelTag != blank %}
+{% if template contains "collection" or template contains "product" %}
+{% if template contains "collection" %}
+<div class="selCollection_tiktok" style="display:none;">
+{% assign lengthArr = shop.metafields.TiktokPixelCode | size %}
+            {%- for field in shop.metafields.TiktokPixelCode  -%}
+        {%assign pixelCode = field | last %} 
+            
+        {%assign a = shop.metafields.TiktokToken%}
+         {%assign aEvent = shop.metafields.TiktokEventCode%}
+         {%assign sStatus = shop.metafields.TikPixelStatus%}
+        {%assign c = field | first | split: "pixelCodeTik" | last %}
+        {%assign b = "accesstokenTik" | append: c%}
+        {%assign bEvent = "eventcodeTik" | append: c%}
+        {%assign maineAccess = a[b] | split: "&with&" | first%}
+        {%assign maineEvent = aEvent[bEvent] | split: "&with&" | first%}
+        {%assign stat = "status" | append: c%}
+         {%assign maineStatus = sStatus[stat] %}
+         
+            	{%assign pixelCode = field | last %}
+            	{%unless pixelCode contains "&with&" %}
+            		{%assign pixelCode = pixelCode | append: "&with&all" %}
+            	{%endunless%}
+                {%assign selCol = pixelCode | split:"&with&" %}
+            	{%if selCol[1] == "all"%}
+            		{%comment%}<p data-tiktokpixelid="{{selCol[0]}}">{{selCol[1]}}</p>{%endcomment%}
+            		{% if maineStatus == "false" %}
+                       
+                            {% else %}
+            <p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+            {%endif%}
+            	{%else%}
+                  {%if collection.handle == selCol[1] %}
+                  {%comment%}  <p data-tiktokpixelid="{{selCol[0]}}">{{selCol[1]}}</p>{%endcomment%}
+            <p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+            
+                  {%endif%}
+            	{%endif%}
+            {%- endfor -%}
+</div>
+{%endif%}
+{% if template contains "product" %}
+<div class="productCol_tiktok" style="display:none;">
+{% assign lengthArr = shop.metafields.TiktokPixelCode | size %}
+{%- for field in shop.metafields.TiktokPixelCode -%}
+{%assign pixelCode = field | last %}
+            
+        {%assign a = shop.metafields.TiktokToken%}
+         {%assign aEvent = shop.metafields.TiktokEventCode%}
+         {%assign sStatus = shop.metafields.TikPixelStatus%}
+        {%assign c = field | first | split: "pixelCodeTik" | last %}
+        {%assign b = "accesstokenTik" | append: c%}
+        {%assign bEvent = "eventcodeTik" | append: c%}
+        {%assign maineAccess = a[b] | split: "&with&" | first%}
+        {%assign maineEvent = aEvent[bEvent] | split: "&with&" | first%}
+         {%assign stat = "status" | append: c%}
+         {%assign maineStatus = sStatus[stat] %}
+         
+            	{%unless pixelCode contains "&with&" %}
+            		{%assign pixelCode = pixelCode | append: "&with&all" %}
+            	{%endunless%}
+                {%assign selCol = pixelCode | split:"&with&" %}
+            	  {%if selCol[1] == "all"%}
+            		{% if maineStatus == "false" %}
+                     
+                      {% else %}
+             	<p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+                   {%endif%}
+            	  {%endif%}
+                  {%for collection in product.collections %}
+                      {%assign colURL = collection.url | remove:"/collections/"%}
+                        {%if selCol[1] == colURL and selCol[1] != "all" %}
+                        {% if maineStatus == "false" %}
+                     
+                            {% else %}
+                            <p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+                           {%endif%}
+                        {%endif%}
+                  {%endfor%}
+{%- for field in shop.metafields.TiktokPixelTag -%}
+{%assign pixelTag = field | last %}
+{%assign pixel_tag = pixelTag | split:"&with&" %}
+{%for tag in product.tags %}
+{%if tag == pixel_tag[1] %}
+<p data-tiktokpixelid="{{pixel_tag[0]}}">{{pixel_tag[1]}}</p>
+{%endif%}
+{%- endfor -%}
+{%- endfor -%}
+{%- endfor -%}
+</div>
+{%endif%}
+{% elsif template contains "cart" %}
+{%if cart.item_count > 0 %}
+{% assign pixelArr = "" %}
+
+
+{% assign pixelTagArr = "" %}
+{%for field in shop.metafields.TiktokPixelTag %}
+{%assign pixelTag = field | last %}
+{%assign pixel_tag = pixelTag | split:"&with&" %}
+{% for item in cart.items %}
+{%for tag in item.product.tags %}
+{%if tag == pixel_tag[1] %}
+{%assign temp = pixel_tag[0] | append:"," %}
+{%assign pixelTagArr = pixelTagArr | append:temp %}
+{%endif%}
+{%endfor%}
+{%endfor%}
+{%endfor%}
+
+
+{%assign pixelTagArr = pixelTagArr | split:"," | uniq %}
+
+
+ <div class="cartCol_tiktok" style="display:none;"> 
+     {% assign lengthArr = shop.metafields.TiktokPixelCode | size %}
+        {%- for field in shop.metafields.TiktokPixelCode -%}
+        {%assign a = shop.metafields.TiktokToken%}
+        {%assign sStatus = shop.metafields.TikPixelStatus%}
+         {%assign aEvent = shop.metafields.TiktokEventCode%}
+        {%assign c = field | first | split: "pixelCodeTik" | last %}
+        {%assign b = "accesstokenTik" | append: c%}
+        {%assign bEvent = "eventcodeTik" | append: c%}
+        {%assign maineAccess = a[b] | split: "&with&" | first%}
+        {%assign maineEvent = aEvent[bEvent] | split: "&with&" | first%}
+        {%assign stat = "status" | append: c%}
+         {%assign maineStatus = sStatus[stat] %}
+
+                {%assign pixelCode = field | last %}
+            	{%unless pixelCode contains "&with&" %}
+            		{%assign pixelCode = pixelCode | append: "&with&all" %}
+            	{%endunless%}
+                {%assign selCol = pixelCode | split:"&with&" %}
+
+                {%if selCol[1] == "all"%}
+            		{%assign temp = selCol[0] | append:"," %}
+            		{%assign pixelArr = pixelArr | append:temp %}
+            		{% if maineStatus == "false" %}
+                       
+                            {% else %}
+                    <p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{selCol[0]}}</p>
+             {%endif%}
+   {%else%}
+                {% if maineStatus == "false" %}
+                       
+                            {% else %}      
+           <p data-tiktokpixelid="{{selCol[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{selCol[0]}}</p>    
+                {%endif%}
+                 {%endif%}
+                {% for item in cart.items %}
+                    {%for collection in item.product.collections %}
+
+                        {%if selCol[1] == collection.handle and selCol[1] != "all" %}
+            				{%assign temp = selCol[0] | append:"," %}
+            				{%assign pixelArr = pixelArr | append:temp %}
+                        {%endif%}
+                    {%endfor%}
+                {%endfor%}
+            {%endfor%}	 
+			
+{% for pixel in pixelTagArr %}
+<p>{{pixel}}</p>
+{%endfor%}
+</div>
+{%endif%}
+{%else%}
+<div class="shopMetafieldstiktok" style="display:none;">
+        {% assign lengthArr = shop.metafields.TiktokPixelCode | size %}
+        {%- for field in shop.metafields.TiktokPixelCode -%}
+          {%assign pixelCode = field | last %} 
+        {%assign a = shop.metafields.TiktokToken%}
+        {%assign sStatus = shop.metafields.TikPixelStatus%}
+        {%assign aEvent = shop.metafields.TiktokEventCode%}
+        {%assign c = field | first | split: "pixelCodeTik" | last %}
+        {%assign b = "accesstokenTik" | append: c%}
+        {%assign bEvent = "eventcodeTik" | append: c%}
+        {%assign maineAccess = a[b] | split: "&with&" | first%}
+        {%assign maineEvent = aEvent[bEvent] | split: "&with&" | first%}
+        {%assign stat = "status" | append: c%}
+         {%assign maineStatus = sStatus[stat] %}
+       {%assign pixel = pixelCode | split:"&with&" %}
+          {%if pixelCode contains "&with&" %}
+            {%if pixelCode contains "&with&all" %}
+              	{%assign pixel = pixelCode | split:"&with&" %}
+              	{% if maineStatus == "false" %}
+                       
+                            {% else %}
+              	<p data-tiktokpixelid="{{pixel[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+            {%endif%}
+             {%endif%}
+          {%else%}
+          {% if maineStatus == "false" %}
+                       
+                            {% else %}
+        	<p data-tiktokpixelid="{{pixel[0]}}" data-tiktokaccess="{{maineAccess}}" data-tiktokevent="{{maineEvent}}">{{pixel[0]}}</p>
+             
+             {%endif%}
+          {%endif%} 
+        {%- endfor -%}
+      </div>
+
+
+{%endif%}
+	<div data-currency="{{shop.currency}}" data-clinetagent=""  data-ip="" data-shop="{{shop.permanent_domain}}" data-time="{{ 'now' | date: '%s' }}" id="shopTiktokCurrency" class="shopTiktokCurrency" style="display:none;">{{shop.currency}}</div>
+   
+{%endif%}
+<script async src="https://mytiktokapp.optiapps.xyz/resources/js/tiktok.js?v={{ 'now' | date: '%s' }}"></script>
+<script>
+ fetch('https://mytiktokapp.optiapps.xyz/myipadd.php')
+  .then(response => response.json())
+  .then(data => {
+    var ipAddress = data.ip;
+    // Use the ipAddress in your JavaScript code as needed
+    document.getElementById("shopTiktokCurrency").setAttribute("data-ip", ipAddress);
+  })
+  .catch(error => console.error('Error:', error));
+</script>

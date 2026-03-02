@@ -1,0 +1,181 @@
+Skip to content
+Product
+Solutions
+Open Source
+Pricing
+
+Search or jump to...
+Sign in
+Sign up
+Kyon147
+/
+laravel-shopify
+Public
+Code
+Issues
+10
+Pull requests
+6
+Discussions
+Actions
+Projects
+1
+Wiki
+Security
+Insights
+GDPR
+ 
+Luke Walsh edited this page on Dec 18, 2022 · 1 revision
+ Pages 39
+Welcome to the wiki!
+
+Please see the homepage for a list of relevant pages.
+
+Clone this wiki locally
+https://github.com/Kyon147/laravel-shopify.wiki.git
+As per Shopify guidelines your app (in some cases) should implement webhooks for GDPR.
+
+This package is remaining agnostic in this issue, but follow this guide to implement an easy solution.
+
+shop/redact
+Information
+48 hours after a store owner uninstalls your app, Shopify sends you a shop/redact webhook. This webhook provides the store's shop_id and shop_domain so that you can erase the customer information for that store from your database. Note, this webhook is only called 48 hours after your app is uninstalled and this webhook is not called if the app is re-installed within 48 hours from the uninstall event.
+
+Payload
+{
+    "shop_id": "<ID>",
+    "shop_domain": "<domain>"
+}
+Response
+You must confirm your receipt of the redaction request by responding with a 200 series status code, and complete the action within 30 days of receipt.
+
+Setup
+php artisan shopify-app:make:webhook ShopRedactJob shop/redact
+
+This will create a webhook job: App/Jobs/ShopRedactJob. You're now free to modify the webhook job and use it to delete information about the shop.
+
+Example Job
+<?php namespace App\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use App\User;
+use Osiset\ShopifyApp\Objects\Values\ShopDomain;
+
+class ShopRedactJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Shop's myshopify domain
+     *
+     * @var ShopDomain
+     */
+    public $shopDomain;
+
+    /**
+     * The webhook data
+     *
+     * @var object
+     */
+    public $data;
+
+    /**
+     * Create a new job instance.
+     *
+     * @param ShopDomain $shopDomain The shop's myshopify domain
+     * @param object     $webhook    The webhook data (JSON decoded)
+     *
+     * @return self
+     */
+    public function __construct(ShopDomain $shopDomain, object $data)
+    {
+        $this->shopDomain = $shopDomain;
+        $this->data = $data;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        try {
+            $shop = User::where('name', $this->shopDomain->toNative())->first();
+            $shop->delete();
+            return;
+        } catch(\Exception $e) {
+            Log::error($e->getMessage());
+        }
+    }
+}
+
+customers/redact
+Information
+When a customer requests deletion of their data from a store owner, Shopify sends a payload on the customers/redact topic to the apps installed on that store. If your app has been granted access to the store's customers or orders, then you receive a redaction request webhook with the resource IDs that you need to redact or delete. In some cases, a customer record contains only the customer's email address.
+
+Payload
+{
+  "shop_id": "<ID>",
+  "shop_domain": "<domain>",
+  "customer": {
+    "id": "<ID>",
+    "email": "<email>",
+    "phone": "<phone>"
+  },
+  "orders_to_redact": ["<order ID>", "<order ID>", "<order ID>"]
+}
+Response
+You must confirm your receipt of the redaction request by responding with a 200 series status code, and complete the action within 30 days of receipt.
+
+Setup
+php artisan shopify-app:make:webhook CustomersRedactJob customers/redact
+
+This will create a webhook job: App/Jobs/CustomersRedactJob. You're now free to modify the webhook job and use it to delete information about customers.
+
+customers/data_request
+Information
+When a customer requests their data from a store owner, Shopify sends a payload on the customers/data_request topic to the apps installed on that store. If your app has been granted access to customers or orders, then you receive a data request webhook with the resource IDs of the data that you need to provide to the store owner. It's your responsibility to provide this data to the store owner directly. In some cases, a customer record contains only the customer's email address.
+
+Payload
+{
+  "shop_id": "<ID>",
+  "shop_domain": "<domain>",
+  "customer": {
+    "id": "<ID>",
+    "email": "<email>",
+    "phone": "<phone>"
+  },
+  "orders_requested": ["<order ID>", "<order ID>", "<order ID>"]
+}
+Response
+You must confirm your receipt of the redaction request by responding with a 200 series status code, and complete the action within 30 days of receipt. It is your responsibility to send the data to the shop owner.
+
+Setup
+php artisan shopify-app:make:webhook CustomersDataRequestJob customers/data_request
+
+This will create a webhook job: App/Jobs/CustomersDataRequestJob. You're now free to modify the webhook job and use it to gather information for the shop owner.
+
+Activation of Webhooks
+Visit your partner dashboard and select your app
+Click the App Setup link from the top toolbar
+Scroll down to Mandatory Webhooks
+Enter https://(your-domain).com/webhook/shop-redact, https://(your-domain).com/webhook/customers-redact and https://(your-domain).com/webhook/customers-data-request
+Notes
+Do not register the webhook in your config/shopify-app.php, the URL(s) you used your app's settings page from the activation step above, will automatically fire by Shopify.
+
+road map
+
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact
