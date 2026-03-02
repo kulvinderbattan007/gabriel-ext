@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Pixel-Multi Pinterest Pixels"
+client_id = "ad25e7ee1b7f2a20b304022c59755d27"
+application_url = "https://multipinterestpixels.com/oauth.php"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://multipinterestpixels.com/appSetup.php" ]
+
+[webhooks]
+api_version = "2022-07"
+
+  [webhooks.privacy_compliance]
+  customer_deletion_url = "https://multipinterestpixels.com/customer_serasure.php"
+  customer_data_request_url = "https://multipinterestpixels.com/user_request.php"
+  shop_deletion_url = "https://multipinterestpixels.com/shop_perasure.php"
+
+[pos]
+embedded = false

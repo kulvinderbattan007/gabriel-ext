@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Dev Pintrack"
+client_id = "c484e176ffd0cacf7e54cbc74ad0a04e"
+application_url = "https://tiktok.pixelinstall.xyz"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://tiktok.pixelinstall.xyz/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+  [webhooks.privacy_compliance]
+  customer_deletion_url = "https://tiktok.pixelinstall.xyz/webhook/customers-redact"
+  customer_data_request_url = "https://tiktok.pixelinstall.xyz/webhook/customers-data-request"
+  shop_deletion_url = "https://tiktok.pixelinstall.xyz/webhook/shop-redact"
+
+[pos]
+embedded = false

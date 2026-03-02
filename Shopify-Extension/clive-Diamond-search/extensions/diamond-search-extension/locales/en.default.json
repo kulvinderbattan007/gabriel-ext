@@ -1,0 +1,18 @@
+{
+	"blocks": {
+		"dianond-result": {
+			"name": "Diamond  result",
+			"settings": {
+			
+			}
+		}	
+	},
+	"blocks": {		
+		"diamond-search": {
+			"name": "Diamond search",
+			"settings": {
+			
+			}
+		}	
+	}
+}

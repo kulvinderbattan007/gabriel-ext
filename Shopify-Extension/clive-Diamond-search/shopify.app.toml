@@ -1,0 +1,19 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Diamond  Search"
+client_id = "5600790e6018e8729a15053c620a1e54"
+application_url = "https://247diamondselector.jewellerybuyer.uk"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://247diamondselector.jewellerybuyer.uk/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false

@@ -1,0 +1,27 @@
+{
+  "name": "gutter-guard-direct",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "shopify": "shopify",
+    "build": "shopify app build",
+    "dev": "shopify app dev",
+    "info": "shopify app info",
+    "generate": "shopify app generate",
+    "deploy": "shopify app deploy"
+  },
+  "dependencies": {
+    "@shopify/app-bridge-react": "^3.7.10",
+    "@shopify/discount-app-components": "^2.1.2",
+    "@shopify/react-form": "^2.5.7",
+    "@shopify/shopify-app-remix": "^2.8.2"
+  },
+  "trustedDependencies": [
+    "@shopify/plugin-cloudflare"
+  ],
+  "author": "jonashenehan",
+  "private": true,
+  "workspaces": [
+    "extensions/*"
+  ]
+}

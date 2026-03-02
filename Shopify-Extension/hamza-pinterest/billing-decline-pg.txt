@@ -1,0 +1,1 @@
+However, should there be an error in billing (such as a bad usage charge signature), an error page will show. A default view is provided by this package. To create your own, create resources/views/vendor/shopify-app/billing/error.blade.php. One variable is passed to the view, $message (usage: {{ $message }}), which contains the human-friendly error message.

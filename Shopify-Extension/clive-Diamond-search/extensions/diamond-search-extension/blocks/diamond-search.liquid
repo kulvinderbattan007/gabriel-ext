@@ -1,0 +1,14 @@
+{% render 'diamond-search' %}
+<script src="{{ 'diamond.js' | asset_url }}" shop={{ shop.permanent_domain }}" defer></script>
+{% schema %}
+{
+  "name": "t:blocks.diamond-search.name",
+  "templates": ["product"],
+  "target": "section",
+  "stylesheet": "diamond-search.css",
+  "settings": [
+  
+  ]
+}
+{% endschema %}
+

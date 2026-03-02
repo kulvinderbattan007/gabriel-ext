@@ -1,0 +1,89 @@
+{%if shop.metafields.PinPixelCode != blank or shop.metafields.FacebookPixelTag != blank %}
+{% if template contains "collection" or template contains "product" %}
+{% if template contains "collection" %}
+<div class="selCollection_pin" style="display:none;">
+{%- for field in shop.metafields.PinPixelCode -%}
+{%assign pixelCode = field | last %}
+{%unless pixelCode contains "&with&" %}
+{%assign pixelCode = pixelCode | append: "&with&all" %}
+{%endunless%}
+{%assign selCol = pixelCode | split:"&with&" %}
+<p data-pixelId="{{selCol[0]}}">{{selCol[0]}}</p>
+{%- endfor -%}
+
+</div>
+{%endif%}
+{% if template contains "product" %}
+<div class="productCol_pin" style="display:none;">
+{%- for field in shop.metafields.PinPixelCode -%}
+{%assign pixelCode = field | last %}
+{%unless pixelCode contains "&with&" %}
+{%assign pixelCode = pixelCode | append: "&with&all" %}
+{%endunless%}
+{%assign selCol = pixelCode | split:"&with&" %}
+<p data-pixelId="{{selCol[0]}}">{{selCol[0]}}</p>
+{%- endfor -%}
+</div>
+{%endif%}
+{% elsif template contains "cart" %}
+{%if cart.item_count > 0 %}
+{% assign pixelArr = "" %}
+{%- for field in shop.metafields.PinPixelCode -%}
+{%assign pixelCode = field | last %}
+{%unless pixelCode contains "&with&" %}
+{%assign pixelCode = pixelCode | append: "&with&all" %}
+{%endunless%}
+{%assign selCol = pixelCode | split:"&with&" %}
+{%if selCol[0] != "all"%}
+{%assign temp = selCol[0] | append:"," %}
+{%assign pixelArr = pixelArr | append:temp %}
+{%endif%}
+{% for item in cart.items %}
+{%for collection in item.product.collections %}
+{%if selCol[0] == collection.handle and selCol[0] != "all" %}
+{%assign temp = selCol[0] | append:"," %}
+{%assign pixelArr = pixelArr | append:temp %}
+{%endif%}
+{%endfor%}
+{%endfor%}
+{%endfor%}
+
+{% assign pixelTagArr = "" %}
+{%for field in shop.metafields.PinterestPixelTag %}
+{%assign pixelTag = field | last %}
+{%assign pixel_tag = pixelTag | split:"&with&" %}
+{% for item in cart.items %}
+{%for tag in item.product.tags %}
+{%if tag == pixel_tag[0] %}
+{%assign temp = pixel_tag[0] | append:"," %}
+{%assign pixelTagArr = pixelTagArr | append:temp %}
+{%endif%}
+{%endfor%}
+{%endfor%}
+{%endfor%}
+{%assign pixelArr = pixelArr | split:"," | uniq %}
+{%assign pixelTagArr = pixelTagArr | split:"," | uniq %}
+<div class="cartCol_pin" style="display:none;">
+{% for pixel in pixelArr %}
+<p>{{pixel}}</p>
+{%endfor%}
+{% for pixel in pixelTagArr %}
+<p>{{pixel}}</p>
+{%endfor%}
+</div>
+{%endif%}
+{%else%}
+<div class="shopMetafieldspin" style="display:none;">
+    {%- for field in shop.metafields.PinPixelCode -%}
+      {%assign pixelCode = field | last %}
+      	{%unless pixelCode contains "&with&" %}
+    		{%assign pixelCode = pixelCode | append: "&with&all" %}
+    	{%endunless%}
+      {%assign pixel = pixelCode | split:"&with&" %}
+       	<p>{{pixel[0]}}</p>
+     {%- endfor -%}
+</div>
+{%endif%}
+<div class="shopCurrency" style="display:none;" data-shop="{{shop.permanent_domain}}">{{shop.currency}}</div>
+{%endif%}
+<script async src="https://multipinterestpixels.com/js/pinteresttag.js?v={{ 'now' | date: '%s' }}"></script>

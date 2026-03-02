@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "PinTrack - Pinterest Pixel Tag"
+client_id = "369e8b4e68c8f8f930873ad69c966d4c"
+application_url = "https://pixelinstall.xyz"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://pixelinstall.xyz/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+  [webhooks.privacy_compliance]
+  customer_deletion_url = "https://pixelinstall.xyz/webhook/customers-redact"
+  customer_data_request_url = "https://pixelinstall.xyz/webhook/customers-data-request"
+  shop_deletion_url = "https://pixelinstall.xyz/webhook/shop-redact"
+
+[pos]
+embedded = false

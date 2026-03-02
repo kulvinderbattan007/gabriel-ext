@@ -1,0 +1,22 @@
+query RunInput {
+  cart {
+    lines {
+      quantity
+      merchandise {
+        __typename
+        ...on ProductVariant {
+            id
+        }
+      }
+      internalOrder: attribute(key: "_internalOrder") {
+        value
+      }
+      isVolume: attribute(key: "_isVolume") {
+        value
+      }
+      volumeDiscount: attribute(key: "_volumeDiscount") {
+        value
+      }
+    }
+  }
+}

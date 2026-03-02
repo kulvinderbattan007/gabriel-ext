@@ -1,0 +1,63 @@
+query RunInput {
+  cart {
+    lines {
+      id
+      quantity
+      
+      bundleId: attribute(key: "_bundleId") {
+        key
+        value
+      }
+      retailDiscount: attribute(key: "_retailDiscount") {
+        value
+      }
+      tradeDiscount: attribute(key: "_tradeDiscount") {
+        value
+      }
+      wholesaleDiscount: attribute(key: "_wholesaleDiscount") {
+        value
+      }
+      bundleName: attribute(key: "_bundleName") {
+        key
+        value
+      }
+      volumeId: attribute(key: "_volumeId") {
+        key
+        value
+      }
+      volumeDiscount: attribute(key: "_volumeDiscount") {
+        key
+        value
+      }
+      volumeBundleName: attribute(key: "_volumeBundleName") {
+        key
+        value
+      }
+      preorderDate: attribute(key: "_Pre-order shipping date") {
+        key
+        value
+      }
+      variantTitle: merchandise {
+        ... on ProductVariant {
+          title
+        }
+      }
+      productTitle: merchandise {
+        ... on ProductVariant {
+          product {
+            title
+          }
+        }
+      }
+    }
+    buyerIdentity {
+      purchasingCompany {
+        company {
+          companyType: metafield(key: "company_type", namespace: "custom") {
+            value
+          }
+        }
+      }
+    }
+  }
+}

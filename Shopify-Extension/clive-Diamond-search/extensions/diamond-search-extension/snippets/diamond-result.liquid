@@ -1,0 +1,72 @@
+  <div style="margin-top:-10px" id="diamondresult">
+                    <div class="color-details">
+                      <div id="sku_value" style="display:none;">{{ current_variant.sku }}</div>
+                    </div>
+                    <form id="detailedform_1" action="index.php?route=product/diamond" name="detailedform_1" method="get">
+                      <input type="hidden" id="dshape" name="shape" value="Round">
+                      <input type="hidden" id="route1" name="route" value="product/diamond">
+                      <input type="hidden" id="dsku" name="sku" value="{{ current_variant.sku }}">
+                      <input type="hidden" id="ident" name="ident" value="solitaire">
+                      <input type="hidden" id="dlowprice1" name="lowprice" value="2028">
+                      <input type="hidden" id="dhighprice1" name="highprice" value="2278">
+                    </form>
+                    <div class="gap"></div>
+                    <div class="col-md-24 budget">
+                      <div class="stage-detail2">                        
+                        <div>
+                          <strong>Exciting choices from <span class="ring_price_add">{{product.price | money }}</span> today</strong>
+                          <h4>How much would you like to spend?</h4>
+                        </div>
+                        <div class="gap"></div>
+                        <input type="number" class="form-control" id="budget" name="budget" value="" min="{{product.price | money }}" style="width: 98%; max-width:450px;" data-default="{{product.price | money }}">
+                      </div>
+                      <div id="error-diamond" style="color:red;padding-top:5px;"></div>
+                    </div>
+                    <form id="detailedform" name="detailedform" action="index.php?route=product/diamond" method="get"><input type="hidden" id="hid_ident" name="hid_ident" value="solitaire">
+                      <input type="hidden" id="hid_cat" name="hid_cat" value="1">
+                      <input type="hidden" id="route11" name="route" value="product/diamond">
+                      <input type="hidden" id="hid_formattedMaterial" name="hid_formattedMaterial" value="whiteGold">
+                      <input type="hidden" name="shape" value="Round">
+                      <input type="hidden" name="sku" value="01-2800-0001">
+                      <input type="hidden" name="ident" value="solitaire">
+                      <input type="hidden" id="dlowprice" name="lowprice" value="-472.0144">
+                      <input type="hidden" id="dhighprice" name="highprice" value="-566.41728">
+                      <input type="hidden" id="stones" name="stones" value="1">
+                      <input type="hidden" id="factor" name="factor" value="">
+                      <input type="hidden" id="ratio" name="ratio" value="">
+                      <input type="hidden" id="dtype" name="dtype" value="diamond">
+                    </form>
+                    <div class="gap"></div>
+                    <div class="col-md-24 search cat-search">
+                      <div class="stage-detail3">
+                        <h4>Pick <b>'Fast Search'</b> or <b>'Detailed Search'</b> or <b>'Expert Help'</b>:&nbsp;&nbsp;&nbsp;</h4>
+                      </div>
+                    </div>
+                    <div class="gap"></div>
+                    <div class="col-md-24 search cat-search">
+                      <div class="stage-detail3">
+                        <h4>Diamond Type</h4>
+                      </div>
+                      <div style="font-size:15px;padding-top:10px;">
+                        <div class="check_boxdv">
+                          <input type="checkbox" class="check_type" name="diamond_type" value="mined"> <lable class="cat-label">Mined</lable>
+                        </div>
+                        <div class="check_boxdv">
+                          <input type="checkbox" class="check_type" name="diamond_type" value="lab grown"> <lable class="cat-label"> Lab Grown </lable>
+                        </div>
+                        <div class="check_boxdv">
+                          <input id="default_check" class="check_type" type="checkbox" name="diamond_type" checked="checked" value="" > <lable class="cat-label">Either</lable>
+                        </div>
+                      </div>                      
+                      <div class="gap"></div>
+                    </div>
+                    <div class="cart-actions srch_btns">
+                      <div class="cart-actions-in">
+                        <button class="button cart first btn btn-1" id="Fastcardfoliyo" title="Fast Search" type="button">Fast Search</button>
+                        <button class="button cart first btn btn-1" id="Detailcardfoliyo" title="Detailed Search" type="button" onclick="ring_product_checkBudget2();">Detailed Search</button>
+                        <button class="button cart first btn btn-1 help_btn" title="Expert Help" type="button" onclick="LiveChatWidget.call('maximize');">Expert Help</button>
+                      </div>
+                  
+                      <div class="clear"></div>
+                    </div>
+                  </di>

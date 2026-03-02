@@ -1,0 +1,19 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "tiktok copy"
+client_id = "3b79f5fd6a908566588366c8db55bacd"
+application_url = "https://mytiktokapp.optiapps.xyz"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [ "https://mytiktokapp.optiapps.xyz/authenticate" ]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false

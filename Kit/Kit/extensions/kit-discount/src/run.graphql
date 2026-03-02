@@ -1,0 +1,46 @@
+query RunInput {
+  cart {
+    lines {
+      quantity
+      merchandise {
+        __typename
+        ...on ProductVariant {
+            id
+        }
+      }
+      retailDiscount: attribute(key: "_retailDiscount") {
+        value
+      }
+      tradeDiscount: attribute(key: "_tradeDiscount") {
+        value
+      }
+      wholesaleDiscount: attribute(key: "_wholesaleDiscount") {
+        value
+      }
+      isBundle: attribute(key: "_isBundle") {
+        value
+      }
+      bundleId: attribute(key: "_bundleId") {
+        value
+      }
+      internalOrder: attribute(key: "_internalOrder") {
+        value
+      }
+      isVolume: attribute(key: "_isVolume") {
+        value
+      }
+      volumeDiscount: attribute(key: "_volumeDiscount") {
+        value
+      }
+    }
+    buyerIdentity {
+      purchasingCompany {
+        company {
+          companyType: metafield(key: "company_type", namespace: "custom") {
+            value
+          }
+        }
+      }
+    }
+  }
+}
